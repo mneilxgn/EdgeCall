@@ -10,8 +10,6 @@ from datetime import datetime
 import logging
 
 from xgboost import XGBClassifier
-from sklearn.model_selection import cross_val_score
-from sklearn.metrics import roc_auc_score
 
 from features import FEATURE_NAMES, FEATURE_DESCRIPTIONS
 
@@ -31,6 +29,33 @@ def get_confidence_tier(prob: float) -> str:
     elif distance >= 0.07:
         return "Medium"
     return "Low"
+
+
+def _manual_cv_auc(clf, X: np.ndarray, y: np.ndarray, k: int = 5) -> np.ndarray:
+    """K-fold CV returning per-fold ROC-AUC without sklearn dependency."""
+    n = len(y)
+    idx = np.random.default_rng(42).permutation(n)
+    fold_size = n // k
+    scores = []
+    for i in range(k):
+        val_idx = idx[i * fold_size: (i + 1) * fold_size]
+        tr_idx = np.concatenate([idx[:i * fold_size], idx[(i + 1) * fold_size:]])
+        clone = clf.__class__(**clf.get_params())
+        clone.fit(X[tr_idx], y[tr_idx])
+        probs = clone.predict_proba(X[val_idx])[:, 1]
+        scores.append(_roc_auc(y[val_idx], probs))
+    return np.array(scores)
+
+
+def _roc_auc(y_true: np.ndarray, y_score: np.ndarray) -> float:
+    """Compute ROC-AUC via trapezoidal rule."""
+    desc = np.argsort(-y_score)
+    y_s = y_true[desc]
+    tp = np.cumsum(y_s)
+    fp = np.cumsum(1 - y_s)
+    tp_rate = tp / (tp[-1] + 1e-9)
+    fp_rate = fp / (fp[-1] + 1e-9)
+    return float(abs(np.trapz(tp_rate, fp_rate)))
 
 
 def build_summary(ticker: str, prob: float, features: dict, feature_importance: dict) -> str:
@@ -104,8 +129,8 @@ class EdgeCallModel:
             n_jobs=-1,
         )
 
-        # Cross-validation AUC
-        cv_scores = cross_val_score(self.model, X, y, cv=5, scoring="roc_auc")
+        # Manual 5-fold CV AUC (no sklearn dependency)
+        cv_scores = _manual_cv_auc(self.model, X, y, k=5)
         logger.info(f"CV AUC: {cv_scores.mean():.3f} ± {cv_scores.std():.3f}")
 
         # Final fit on all data
