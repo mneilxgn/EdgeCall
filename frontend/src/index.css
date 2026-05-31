@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-50: #f0f4ff;
+  --color-brand-100: #dce6ff;
+  --color-brand-400: #7b93fa;
+  --color-brand-500: #4f6ef7;
+  --color-brand-600: #3b55e6;
+  --color-brand-700: #2e44cc;
+  --color-brand-900: #1a2880;
+}
+
+@layer base {
+  body {
+    @apply bg-gray-950 text-gray-100 antialiased;
+    font-family: system-ui, -apple-system, sans-serif;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-gray-900 border border-gray-800 rounded-2xl p-6;
+  }
+  .badge-high {
+    @apply text-xs font-semibold px-2 py-0.5 rounded-full;
+    background: rgb(16 185 129 / 0.15);
+    color: #34d399;
+    border: 1px solid rgb(16 185 129 / 0.3);
+  }
+  .badge-medium {
+    @apply text-xs font-semibold px-2 py-0.5 rounded-full;
+    background: rgb(234 179 8 / 0.15);
+    color: #fbbf24;
+    border: 1px solid rgb(234 179 8 / 0.3);
+  }
+  .badge-low {
+    @apply text-xs font-semibold px-2 py-0.5 rounded-full;
+    background: rgb(107 114 128 / 0.15);
+    color: #9ca3af;
+    border: 1px solid rgb(107 114 128 / 0.3);
+  }
+}
