@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+import os
 import time
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta
@@ -37,7 +38,18 @@ logger = logging.getLogger(__name__)
 async def lifespan(app: FastAPI):
     model = get_model()
     if not model.is_loaded:
-        logger.warning("Model not found. Run `python train.py` to train the model first.")
+        is_vercel = os.environ.get("VERCEL") == "1"
+        if is_vercel:
+            logger.info("Vercel cold start — generating synthetic model...")
+            try:
+                import generate_synthetic_data
+                generate_synthetic_data.main()
+                model.load()
+                logger.info("Synthetic model ready.")
+            except Exception as e:
+                logger.error(f"Synthetic model generation failed: {e}")
+        else:
+            logger.warning("Model not found. Run `python train.py` to train the model first.")
     yield
 
 

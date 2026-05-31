@@ -17,7 +17,9 @@ from features import FEATURE_NAMES, FEATURE_DESCRIPTIONS
 
 logger = logging.getLogger(__name__)
 
-MODEL_DIR = Path(__file__).parent / "model_artifacts"
+# On Vercel only /tmp is writable; fall back to local dir otherwise
+_IS_VERCEL = os.environ.get("VERCEL") == "1"
+MODEL_DIR = Path("/tmp/model_artifacts") if _IS_VERCEL else Path(__file__).parent / "model_artifacts"
 MODEL_PATH = MODEL_DIR / "edgecall_model.joblib"
 META_PATH = MODEL_DIR / "model_meta.joblib"
 
