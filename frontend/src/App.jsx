@@ -113,7 +113,7 @@ export default function App() {
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 leading-tight">
             Will they beat <span className="text-brand-500">earnings?</span>
           </h1>
-          <p className="text-gray-400 text-base sm:text-lg max-w-xl mx-auto">
+          <p className="text-gray-400 text-base sm:text-lg max-w-xl mx-auto text-center">
             EdgeCall uses an XGBoost model trained on 5+ years of earnings history to predict whether a company will beat or miss estimates.
           </p>
         </div>
@@ -125,9 +125,9 @@ export default function App() {
       {/* Main content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pb-16">
         {error && (
-          <div className="max-w-2xl mx-auto mb-6 p-4 bg-red-900/20 border border-red-800/30 rounded-xl flex items-center gap-3 text-sm text-red-300">
-            <AlertCircle size={16} className="shrink-0" />
-            {error}
+          <div className="max-w-2xl mx-auto mb-6 p-4 bg-red-900/20 border border-red-800/30 rounded-xl flex items-start gap-3 text-sm text-red-300">
+            <AlertCircle size={16} className="shrink-0 mt-0.5" />
+            <span className="leading-relaxed">{error}</span>
           </div>
         )}
 
@@ -139,16 +139,16 @@ export default function App() {
         )}
 
         {prediction && !loadingPredict && (
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
             {/* Left: tabs */}
-            <div className="xl:col-span-2 space-y-4">
-              {/* Tabs */}
-              <div className="flex gap-1 bg-gray-900 border border-gray-800 rounded-xl p-1 w-fit">
+            <div className="lg:col-span-2 space-y-4">
+              {/* Tabs — full width, equal columns */}
+              <div className="flex gap-1 bg-gray-900 border border-gray-800 rounded-xl p-1">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`text-sm px-4 py-2 rounded-lg transition-all ${activeTab === tab.id ? 'bg-brand-500 text-white font-semibold' : 'text-gray-400 hover:text-white'}`}
+                    className={`flex-1 text-sm px-3 py-2 rounded-lg transition-all text-center ${activeTab === tab.id ? 'bg-brand-500 text-white font-semibold' : 'text-gray-400 hover:text-white'}`}
                   >
                     {tab.label}
                   </button>
@@ -165,7 +165,7 @@ export default function App() {
             </div>
 
             {/* Right: calendar */}
-            <div className="xl:col-span-1">
+            <div className="lg:col-span-1">
               <EarningsCalendar
                 data={calendar}
                 loading={loadingCalendar}

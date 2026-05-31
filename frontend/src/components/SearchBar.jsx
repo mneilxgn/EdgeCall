@@ -38,7 +38,7 @@ export function SearchBar({ onSearch, loading }) {
       </form>
 
       {/* Quick picks */}
-      <div className="flex flex-wrap gap-2 mt-3">
+      <div className="flex flex-wrap gap-2 mt-3 justify-center">
         <span className="text-xs text-gray-500 self-center">Quick:</span>
         {QUICK_PICKS.map((t) => (
           <button
