@@ -1,4 +1,8 @@
-const BASE = '/api'
+// In production, VITE_API_URL points to the Railway backend.
+// In dev, Vite's proxy forwards /api → localhost:8000.
+const BASE = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL}/api`
+  : '/api'
 
 async function request(path) {
   const res = await fetch(`${BASE}${path}`)
